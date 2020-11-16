@@ -56,10 +56,43 @@ class Banco{
                 continue
             }
             //armazenando no Array
+            despesa.id = i
             despesas.push(despesa)
         }
 
         return despesas
+    }
+
+    pesquisar(despesa){
+        let despesasFiltradas = Array()
+
+        despesasFiltradas = this.recuperarTodosRegistros()
+        
+        if(despesa.ano != ''){
+            despesasFiltradas = despesasFiltradas.filter(d => d.ano == despesa.ano)
+        }
+
+        if(despesa.mes != ''){
+            despesasFiltradas = despesasFiltradas.filter(d => d.mes == despesa.mes)
+        }
+
+        if(despesa.dia != ''){
+            despesasFiltradas = despesasFiltradas.filter(d => d.dia == despesa.dia)
+        }
+
+        if(despesa.tipo != ''){
+            despesasFiltradas = despesasFiltradas.filter(d => d.tipo == despesa.tipo)
+        }
+
+        if(despesa.descricao != ''){
+            despesasFiltradas = despesasFiltradas.filter(d => d.descricao == despesa.descricao)
+        }
+
+        return despesasFiltradas
+    }
+
+    remover(id){
+        localStorage.removeItem(id)
     }
 }
 
@@ -87,6 +120,13 @@ function cadastrarDespesa(){
         document.getElementById('tipoTexto').className = "modal-header text-success"
         document.getElementById('buttonModalBack').innerHTML = 'OK'
         $('#modalDespesas').modal('show')
+
+        ano.value = ''
+         mes.value  = ''
+         dia.value = ''
+         tipo.value = ''
+         descricao.value = ''
+         valor.value = ''
    }else{
         document.getElementById('textoModal').innerHTML = 'Erro ao salvar dados'
         document.getElementById('lableModalDespesa').innerHTML = 'Erro'
@@ -101,6 +141,56 @@ function carregaListaDespesas(){
     despesas = banco.recuperarTodosRegistros()
     
     let listaDespesas = document.getElementById('listaDespesas')
+
+    despesas.forEach(d => {
+        
+        //criando table row   
+        let linha = listaDespesas.insertRow()
+
+        //criando td
+        linha.insertCell(0).innerHTML = `${d.dia}/${d.mes}/${d.ano}`
+
+        switch(d.tipo){
+            case '1': d.tipo = 'Alimentação';break
+            case '2': d.tipo = 'Educação';break
+            case '3': d.tipo = 'Lazer';break
+            case '4': d.tipo = 'Saúde';break
+            case '5': d.tipo = 'Transporte';break
+        }
+        linha.insertCell(1).innerHTML = d.tipo
+        linha.insertCell(2).innerHTML = d.descricao
+        linha.insertCell(3).innerHTML = d.valor
+
+        //botao
+        let btn = document.createElement('button')
+        btn.className = 'btn btn-danger'
+        btn.innerHTML = '<i class="fas fa-times"></i>'
+        btn.id = `id_despesa_${d.id}`
+        btn.onclick = function () {
+            let idremover = this.id.replace('id_despesa_','')
+            
+            banco.remover(idremover)
+            window.location.reload()
+        }
+        linha.insertCell(4).append(btn)
+    })
+}
+
+function pesquisarDespesa(){
+    let ano = document.getElementById('ano').value
+    let mes = document.getElementById('mes').value
+    let dia  = document.getElementById('dia').value
+    let tipo = document.getElementById('tipo').value
+    let descricao = document.getElementById('descricao').value
+    let valor = document.getElementById('valor').value
+
+    let despesa = new Despesa(ano,mes,dia,tipo,descricao,valor)
+    
+    let despesas = Array()
+    despesas = banco.pesquisar(despesa)
+    
+    let listaDespesas = document.getElementById('listaDespesas')
+    listaDespesas.innerHTML = ''
 
     despesas.forEach(d => {
         
