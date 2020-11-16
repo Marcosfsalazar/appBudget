@@ -40,6 +40,27 @@ class Banco{
 
         localStorage.setItem('id',id)
     }
+
+    recuperarTodosRegistros(){
+        //Array Objetos
+        let despesas = Array()
+
+        let maxItens = localStorage.getItem('id')
+        
+        //recuperando os itens no localStorage
+        for(let i = 1; i <= maxItens; i++){
+
+            let despesa = JSON.parse(localStorage.getItem(i))
+            
+            if(despesa === null ){
+                continue
+            }
+            //armazenando no Array
+            despesas.push(despesa)
+        }
+
+        return despesas
+    }
 }
 
 let banco = new Banco()
@@ -73,4 +94,31 @@ function cadastrarDespesa(){
         document.getElementById('buttonModalBack').innerHTML = 'Voltar e Corrigir'
         $('#modalDespesas').modal('show')
    }
+}
+
+function carregaListaDespesas(){
+    let despesas = Array()
+    despesas = banco.recuperarTodosRegistros()
+    
+    let listaDespesas = document.getElementById('listaDespesas')
+
+    despesas.forEach(d => {
+        
+        //criando table row   
+        let linha = listaDespesas.insertRow()
+
+        //criando td
+        linha.insertCell(0).innerHTML = `${d.dia}/${d.mes}/${d.ano}`
+
+        switch(d.tipo){
+            case '1': d.tipo = 'Alimentação';break
+            case '2': d.tipo = 'Educação';break
+            case '3': d.tipo = 'Lazer';break
+            case '4': d.tipo = 'Saúde';break
+            case '5': d.tipo = 'Transporte';break
+        }
+        linha.insertCell(1).innerHTML = d.tipo
+        linha.insertCell(2).innerHTML = d.descricao
+        linha.insertCell(3).innerHTML = d.valor
+    })
 }
