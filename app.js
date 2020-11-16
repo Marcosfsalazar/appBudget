@@ -61,8 +61,16 @@ function cadastrarDespesa(){
     
    if(despesa.validarDados()){
         banco.gravar(despesa)
-        $('#sucessoGravacao').modal('show')
+        document.getElementById('textoModal').innerHTML = 'Sucesso ao salvar dados'
+        document.getElementById('lableModalDespesa').innerHTML = 'Sucesso'
+        document.getElementById('tipoTexto').className = "modal-header text-success"
+        document.getElementById('buttonModalBack').innerHTML = 'OK'
+        $('#modalDespesas').modal('show')
    }else{
-        $('#erroGravacao').modal('show')
+        document.getElementById('textoModal').innerHTML = 'Erro ao salvar dados'
+        document.getElementById('lableModalDespesa').innerHTML = 'Erro'
+        document.getElementById('tipoTexto').className = "modal-header text-danger"
+        document.getElementById('buttonModalBack').innerHTML = 'Voltar e Corrigir'
+        $('#modalDespesas').modal('show')
    }
 }
